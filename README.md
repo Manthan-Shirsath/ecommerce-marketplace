@@ -1,4 +1,12 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a production-ready ecommerce starter built with [Next.js 14](https://nextjs.org/), App Router, TypeScript, Tailwind CSS, and `shadcn/ui`.
+
+## Stack
+
+- Next.js 14 with App Router
+- TypeScript
+- Tailwind CSS
+- `shadcn/ui`
+- `src/components` and `src/lib` folders for clean scaling
 
 ## Getting Started
 
@@ -6,31 +14,71 @@ First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the starter storefront.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can start editing the homepage in `src/app/page.tsx`, shared sections in `src/components`, and mock storefront data in `src/lib/data.ts`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Folder Structure
 
-## Learn More
+```text
+src/
+  app/
+  components/
+    home/
+    layout/
+    shared/
+    ui/
+  lib/
+```
 
-To learn more about Next.js, take a look at the following resources:
+## GitHub Push
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Create a new empty GitHub repository first, then run:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+git remote add origin https://github.com/<your-username>/<your-repo>.git
+git branch -M main
+git push -u origin main
+```
 
-## Deploy on Vercel
+If you prefer SSH:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+git remote add origin git@github.com:<your-username>/<your-repo>.git
+git branch -M main
+git push -u origin main
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Vercel Deployment
+
+This project is ready for Vercel with the default Next.js settings.
+
+1. Push the repository to GitHub.
+2. Go to Vercel and create a new project.
+3. Import your GitHub repository.
+4. Keep the detected framework as `Next.js`.
+5. Use the default build settings and deploy.
+
+Vercel should automatically use:
+
+- Install command: `npm install`
+- Build command: `npm run build`
+- Output setting: Next.js default
+
+## Build Check
+
+Build the production bundle with:
+
+```bash
+npm run build
+```
+
+You can also verify linting locally with:
+
+```bash
+npm run lint
+```
+
+You can deploy the app anywhere Next.js is supported, including Vercel, Railway, Render, and self-hosted Node environments.

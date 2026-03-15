@@ -1,0 +1,95 @@
+import Link from "next/link"
+import { Star } from "lucide-react"
+
+import { AddToCartButton } from "@/components/cart/add-to-cart-button"
+import { SectionHeading } from "@/components/shared/section-heading"
+import { Badge } from "@/components/ui/badge"
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { featuredProducts } from "@/lib/data"
+import { formatCurrency } from "@/lib/format"
+
+export function FeaturedProducts() {
+  return (
+    <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <div className="space-y-10">
+        <SectionHeading
+          eyebrow="Bestsellers"
+          title="Popular Marketplace Picks"
+          description="Explore a few of the products buyers are discovering from independent sellers and small-town makers."
+        />
+
+        <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-4">
+          {featuredProducts.map((product, index) => (
+            <div key={product.id} className="relative">
+              <Link
+                href={`/product/${product.slug}`}
+                aria-label={`View ${product.name}`}
+                className="absolute inset-0 z-0 rounded-xl"
+              />
+              <Card className="border-border/70 bg-background/90 shadow-sm shadow-slate-950/5">
+                <div
+                  className={`relative z-10 m-4 flex h-64 items-end rounded-[1.25rem] p-5 text-white pointer-events-none ${
+                    index === 0
+                      ? "bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900"
+                      : index === 1
+                        ? "bg-gradient-to-br from-amber-300 via-orange-300 to-rose-300"
+                        : "bg-gradient-to-br from-sky-400 via-cyan-300 to-blue-500"
+                  }`}
+                >
+                  <p className="max-w-32 text-sm font-medium uppercase tracking-[0.16em] text-white/80">
+                    {product.category}
+                  </p>
+                </div>
+                <CardHeader className="relative z-10 space-y-3 pointer-events-none">
+                  <div className="flex items-center justify-between gap-4">
+                    <Badge
+                      variant="outline"
+                      className="border-border/80 bg-background"
+                    >
+                      {product.city}
+                    </Badge>
+                    <div className="inline-flex items-center gap-1 text-sm text-muted-foreground">
+                      <Star className="size-4 fill-amber-400 text-amber-400" />
+                      <span>{product.rating}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <CardTitle className="text-2xl">{product.name}</CardTitle>
+                    <CardDescription className="leading-7">
+                      Sold by {product.seller} in {product.city}. Category:
+                      {" "}
+                      {product.category}.
+                    </CardDescription>
+                  </div>
+                </CardHeader>
+                <CardFooter className="relative z-10 justify-between gap-4">
+                  <div className="pointer-events-none">
+                    <p className="text-sm text-muted-foreground">Price</p>
+                    <p className="text-xl font-semibold text-foreground">
+                      {formatCurrency(product.price)}
+                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {product.stock} in stock
+                    </p>
+                  </div>
+                  <div className="pointer-events-auto">
+                    <AddToCartButton
+                      productId={product.id}
+                      className="bg-primary text-primary-foreground hover:bg-primary/90"
+                    />
+                  </div>
+                </CardFooter>
+              </Card>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
