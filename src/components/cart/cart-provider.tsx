@@ -9,27 +9,21 @@ import {
   type ReactNode,
 } from "react"
 
-import { featuredProducts } from "@/lib/data"
+import { MarketplaceProduct } from "@/lib/constants"
 
 const CART_STORAGE_KEY = "ecommerce-cart"
-
-type CartItem = {
-  productId: string
-  quantity: number
-}
 
 type CartProduct = {
   productId: string
   quantity: number
-  product: (typeof featuredProducts)[number]
+  product: MarketplaceProduct
 }
 
 type CartContextValue = {
-  items: CartItem[]
   cartProducts: CartProduct[]
   totalItems: number
   totalPrice: number
-  addItem: (productId: string) => void
+  addItem: (product: MarketplaceProduct) => void
   removeItem: (productId: string) => void
   clearCart: () => void
 }
@@ -37,14 +31,14 @@ type CartContextValue = {
 const CartContext = createContext<CartContextValue | null>(null)
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([])
+  const [items, setItems] = useState<CartProduct[]>([])
   const [isHydrated, setIsHydrated] = useState(false)
 
   useEffect(() => {
     try {
       const storedCart = window.localStorage.getItem(CART_STORAGE_KEY)
       if (storedCart) {
-        setItems(JSON.parse(storedCart) as CartItem[])
+        setItems(JSON.parse(storedCart) as CartProduct[])
       }
     } catch {
       window.localStorage.removeItem(CART_STORAGE_KEY)
@@ -61,19 +55,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items))
   }, [isHydrated, items])
 
-  const addItem = (productId: string) => {
+  const addItem = (product: MarketplaceProduct) => {
     setItems((currentItems) => {
-      const existingItem = currentItems.find((item) => item.productId === productId)
+      const existingItem = currentItems.find((item) => item.productId === product.id)
 
       if (existingItem) {
         return currentItems.map((item) =>
-          item.productId === productId
+          item.productId === product.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         )
       }
 
-      return [...currentItems, { productId, quantity: 1 }]
+      return [...currentItems, { productId: product.id, quantity: 1, product }]
     })
   }
 
@@ -88,26 +82,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   const value = useMemo(() => {
-    const cartProducts = items.flatMap((item) => {
-      const product = featuredProducts.find(
-        (candidate) => candidate.id === item.productId
-      )
-
-      return product ? [{ productId: item.productId, quantity: item.quantity, product }] : []
-    })
-
-    const totalItems = cartProducts.reduce(
+    const totalItems = items.reduce(
       (sum, item) => sum + item.quantity,
       0
     )
-    const totalPrice = cartProducts.reduce(
+    const totalPrice = items.reduce(
       (sum, item) => sum + item.product.price * item.quantity,
       0
     )
 
     return {
-      items,
-      cartProducts,
+      cartProducts: items,
       totalItems,
       totalPrice,
       addItem,

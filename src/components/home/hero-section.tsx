@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { heroHighlights, heroStats, trustNotes } from "@/lib/data"
+import { heroHighlights, heroStats, trustNotes } from "@/lib/constants"
 import { formatCurrency } from "@/lib/format"
 
 export function HeroSection() {

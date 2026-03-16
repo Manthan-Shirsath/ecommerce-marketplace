@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
 import { SectionHeading } from "@/components/shared/section-heading"
@@ -8,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { categories } from "@/lib/data"
+import { categories } from "@/lib/constants"
 
 export function CategoryGrid() {
   return (
@@ -25,29 +26,30 @@ export function CategoryGrid() {
             const Icon = category.icon
 
             return (
-              <Card
-                key={category.name}
-                className="border-border/70 bg-background/85 transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-950/5"
-              >
-                <CardHeader className="space-y-4">
-                  <div className="flex size-12 items-center justify-center rounded-2xl bg-secondary text-foreground">
-                    <Icon className="size-5" />
-                  </div>
-                  <div className="space-y-2">
-                    <CardTitle>{category.name}</CardTitle>
-                    <CardDescription className="leading-7">
-                      {category.description}
-                    </CardDescription>
-                  </div>
-                </CardHeader>
-                <CardContent className="flex items-center justify-between pt-2 text-sm text-muted-foreground">
-                  <span>{category.itemCount}</span>
-                  <span className="inline-flex items-center gap-1 font-medium text-foreground">
-                    Browse
-                    <ArrowRight className="size-4" />
-                  </span>
-                </CardContent>
-              </Card>
+              <Link key={category.name} href={`/category/${category.slug}`}>
+                <Card
+                  className="border-border/70 bg-background/85 transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-950/5"
+                >
+                  <CardHeader className="space-y-4">
+                    <div className="flex size-12 items-center justify-center rounded-2xl bg-secondary text-foreground">
+                      <Icon className="size-5" />
+                    </div>
+                    <div className="space-y-2">
+                      <CardTitle>{category.name}</CardTitle>
+                      <CardDescription className="leading-7">
+                        {category.description}
+                      </CardDescription>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="flex items-center justify-between pt-2 text-sm text-muted-foreground">
+                    <span>{category.itemCount}</span>
+                    <span className="inline-flex items-center gap-1 font-medium text-foreground">
+                      Browse
+                      <ArrowRight className="size-4" />
+                    </span>
+                  </CardContent>
+                </Card>
+              </Link>
             )
           })}
         </div>

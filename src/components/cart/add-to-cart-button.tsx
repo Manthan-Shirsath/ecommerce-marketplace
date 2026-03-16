@@ -2,14 +2,15 @@
 
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/components/cart/cart-provider"
+import { MarketplaceProduct } from "@/lib/constants"
 
 type AddToCartButtonProps = {
-  productId: string
+  product: MarketplaceProduct
   className?: string
 }
 
 export function AddToCartButton({
-  productId,
+  product,
   className,
 }: AddToCartButtonProps) {
   const { addItem } = useCart()
@@ -18,7 +19,7 @@ export function AddToCartButton({
     <Button
       type="button"
       className={className}
-      onClick={() => addItem(productId)}
+      onClick={() => addItem(product)}
     >
       Add to Cart
     </Button>

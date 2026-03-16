@@ -1,7 +1,7 @@
 import Link from "next/link"
 
 import { Separator } from "@/components/ui/separator"
-import { footerGroups } from "@/lib/data"
+import { footerGroups } from "@/lib/constants"
 
 export function SiteFooter() {
   return (

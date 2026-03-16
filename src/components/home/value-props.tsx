@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { valueProps } from "@/lib/data"
+import { valueProps } from "@/lib/constants"
 
 export function ValueProps() {
   return (
