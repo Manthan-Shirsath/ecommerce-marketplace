@@ -77,7 +77,7 @@ export default async function SellerPage({ params }: SellerPageProps) {
                 const reviewCount = productReviews.length
                 const averageRating = reviewCount > 0 
                   ? (productReviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount).toFixed(1)
-                  : product.rating.toFixed(1)
+                  : (product.rating ?? 0).toFixed(1)
 
                 return (
                 <div key={product.id} className="relative">

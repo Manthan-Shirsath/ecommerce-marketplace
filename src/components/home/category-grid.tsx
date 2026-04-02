@@ -13,7 +13,7 @@ import { categories } from "@/lib/constants"
 
 export function CategoryGrid() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+    <section id="categories" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
       <div className="space-y-10">
         <SectionHeading
           eyebrow="Collections"

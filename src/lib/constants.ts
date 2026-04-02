@@ -33,10 +33,10 @@ export type MarketplaceReview = {
 }
 
 export const navigation = [
-  { label: "New arrivals", href: "#" },
-  { label: "Collections", href: "#" },
-  { label: "Best sellers", href: "#" },
-  { label: "Gift guide", href: "#" },
+  { label: "New arrivals", href: "/search?sort=newest" },
+  { label: "Collections", href: "/#categories" },
+  { label: "Best sellers", href: "/search?sort=rating" },
+  { label: "Gift guide", href: "/search?q=gift" },
 ]
 
 export const heroStats = [
@@ -114,15 +114,30 @@ export const valueProps = [
 export const footerGroups = [
   {
     title: "Shop",
-    links: ["New arrivals", "Bundles", "Best sellers", "Gift cards"],
+    links: [
+      { label: "New arrivals", href: "/search?sort=newest" },
+      { label: "Bundles", href: "/search?q=bundle" },
+      { label: "Best sellers", href: "/search?sort=rating" },
+      { label: "Gift cards", href: "/search?q=gift" }
+    ],
   },
   {
     title: "Company",
-    links: ["About", "Journal", "Stockists", "Careers"],
+    links: [
+      { label: "About", href: "/" },
+      { label: "Journal", href: "/" },
+      { label: "Stockists", href: "/" },
+      { label: "Careers", href: "/" }
+    ],
   },
   {
     title: "Support",
-    links: ["Shipping", "Returns", "FAQ", "Contact"],
+    links: [
+      { label: "Shipping", href: "/" },
+      { label: "Returns", href: "/" },
+      { label: "FAQ", href: "/" },
+      { label: "Contact", href: "/" }
+    ],
   },
 ]
 

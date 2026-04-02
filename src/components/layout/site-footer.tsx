@@ -29,11 +29,11 @@ export function SiteFooter() {
               <div className="space-y-3">
                 {group.links.map((link) => (
                   <Link
-                    key={link}
-                    href="#"
+                    key={link.label}
+                    href={link.href}
                     className="block text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    {link}
+                    {link.label}
                   </Link>
                 ))}
               </div>
@@ -46,13 +46,13 @@ export function SiteFooter() {
         <div className="flex flex-col gap-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 Ecommerce. All rights reserved.</p>
           <div className="flex gap-4">
-            <Link href="#" className="transition-colors hover:text-foreground">
+            <Link href="/" className="transition-colors hover:text-foreground">
               Privacy
             </Link>
-            <Link href="#" className="transition-colors hover:text-foreground">
+            <Link href="/" className="transition-colors hover:text-foreground">
               Terms
             </Link>
-            <Link href="#" className="transition-colors hover:text-foreground">
+            <Link href="/" className="transition-colors hover:text-foreground">
               Instagram
             </Link>
           </div>

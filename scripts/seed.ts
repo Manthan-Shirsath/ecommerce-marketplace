@@ -5,15 +5,24 @@ import * as path from 'path'
 // Load environment variables from .env.local
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') })
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+const supabaseUrl = process.env.SUPABASE_URL
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-if (!supabaseUrl || !supabaseAnonKey || !supabaseUrl.startsWith('http')) {
-  console.log("⚠️  Please provide valid NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local to run the seed script.")
-  process.exit(0)
+if (!supabaseUrl || !supabaseUrl.startsWith('http')) {
+  console.error('❌  Missing or invalid SUPABASE_URL in .env.local')
+  console.error('   Example: SUPABASE_URL=https://your-project-id.supabase.co')
+  process.exit(1)
 }
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey)
+if (!supabaseServiceKey) {
+  console.error('❌  Missing SUPABASE_SERVICE_ROLE_KEY in .env.local')
+  console.error('   Find it in: Supabase Dashboard → Settings → API → service_role key')
+  console.error('   ⚠️  Never expose this key to the browser or commit it to git!')
+  process.exit(1)
+}
+
+// Use service role key to bypass Row Level Security for bulk inserts
+const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
 const NUM_PRODUCTS = 200
 
@@ -28,25 +37,25 @@ const CATEGORIES = [
 ]
 
 const ADJECTIVES = [
-  "Handcrafted", "Rustic", "Vintage", "Modern", "Minimalist", "Cozy", 
+  "Handcrafted", "Rustic", "Vintage", "Modern", "Minimalist", "Cozy",
   "Organic", "Sustainable", "Artisanal", "Bespoke", "Colorful", "Elegant"
 ]
 
 const NOUNS = [
-  "Ceramic Mug", "Wooden Bowl", "Linen Shirt", "Silver Necklace", 
-  "Soy Candle", "Leather Wallet", "Wall Art", "Face Serum", 
+  "Ceramic Mug", "Wooden Bowl", "Linen Shirt", "Silver Necklace",
+  "Soy Candle", "Leather Wallet", "Wall Art", "Face Serum",
   "Coffee Blend", "Woven Basket", "Knit Blanket", "Soap Bar"
 ]
 
 const CITIES = [
-  "New York", "Los Angeles", "Chicago", "Houston", "Phoenix", 
+  "New York", "Los Angeles", "Chicago", "Houston", "Phoenix",
   "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose",
   "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte"
 ]
 
 const SELLERS = [
   "Earth & Co", "Urban Artisan", "The Minimalist Maker", "Sunset Studios",
-  "Heritage Crafts", "Nova Goods", "Pine & Oak", "Lumina Designs", 
+  "Heritage Crafts", "Nova Goods", "Pine & Oak", "Lumina Designs",
   "Wandering Maker", "Terra Cotta Collective"
 ]
 
@@ -64,7 +73,7 @@ const REVIEW_COMMENTS = [
 ]
 
 const REVIEWERS = [
-  "Alex J.", "Sam T.", "Jamie L.", "Chris P.", "Taylor R.", 
+  "Alex J.", "Sam T.", "Jamie L.", "Chris P.", "Taylor R.",
   "Jordan M.", "Casey S.", "Morgan E.", "Riley D.", "Avery K."
 ]
 
@@ -79,65 +88,67 @@ function generateSlug(name: string): string {
 }
 
 async function seedDatabase() {
-  console.log('Starting database seed...')
-  
+  console.log('🌱 Starting database seed...')
+  console.log(`   Target: ${supabaseUrl}`)
+  console.log('')
+
   const products = []
-  
+
   for (let i = 0; i < NUM_PRODUCTS; i++) {
     const adj = getRandomItem(ADJECTIVES)
     const noun = getRandomItem(NOUNS)
     const name = `${adj} ${noun}`
-    
+
     products.push({
       name,
       slug: generateSlug(name),
-      price: Math.floor(Math.random() * 190) + 10, // 10 to 199
+      price: Math.floor(Math.random() * 190) + 10,
       seller: getRandomItem(SELLERS),
       city: getRandomItem(CITIES),
       category: getRandomItem(CATEGORIES),
       description: `This beautiful ${name.toLowerCase()} is carefully crafted to bring joy and utility to your life. Made with high-quality materials and meticulous attention to detail.`,
-      stock: Math.floor(Math.random() * 50) + 1, // 1 to 50
-      // We will leave image_url empty so it falls back to the gradient, or we could add placeholder images.
+      stock: Math.floor(Math.random() * 50) + 1,
     })
   }
 
-  console.log(`Inserting ${products.length} products...`)
-  
-  // Insert products in batches
+  console.log(`📦 Inserting ${products.length} products...`)
+
   const batchSize = 50
-  const insertedProductIds = []
-  
+  const insertedProductIds: string[] = []
+
   for (let i = 0; i < products.length; i += batchSize) {
     const batch = products.slice(i, i + batchSize)
     const { data, error } = await supabase
       .from('products')
       .insert(batch)
       .select('id')
-      
+
     if (error) {
-      console.error('Error inserting products:', error)
-      return
+      console.error('❌  Error inserting products:', error.message)
+      console.error('   Details:', error.details)
+      process.exit(1)
     }
-    
-    insertedProductIds.push(...(data || []).map(p => p.id))
-    console.log(`Inserted batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(products.length/batchSize)}`)
+
+    insertedProductIds.push(...(data || []).map((p: { id: string }) => p.id))
+    const batchNum = Math.floor(i / batchSize) + 1
+    const totalBatches = Math.ceil(products.length / batchSize)
+    console.log(`   Batch ${batchNum}/${totalBatches} done (${insertedProductIds.length} products)`)
   }
 
-  console.log(`Successfully inserted ${insertedProductIds.length} products.`)
-  console.log('Generating reviews...')
-  
+  console.log(`✅  Inserted ${insertedProductIds.length} products successfully.`)
+  console.log('')
+  console.log('⭐  Generating reviews...')
+
   const reviews = []
-  
+
   for (const productId of insertedProductIds) {
-    // 1 to 5 reviews per product
     const numReviews = Math.floor(Math.random() * 5) + 1
-    
+
     for (let i = 0; i < numReviews; i++) {
-      // Skew ratings higher
-      const rating = Math.random() > 0.8 ? 
-        Math.floor(Math.random() * 2) + 2 : // 2-3 occasionally
-        Math.floor(Math.random() * 2) + 4   // mostly 4-5
-        
+      const rating = Math.random() > 0.8
+        ? Math.floor(Math.random() * 2) + 2  // 2-3 occasionally
+        : Math.floor(Math.random() * 2) + 4  // mostly 4-5
+
       reviews.push({
         product_id: productId,
         user_name: getRandomItem(REVIEWERS),
@@ -147,21 +158,38 @@ async function seedDatabase() {
     }
   }
 
-  console.log(`Inserting ${reviews.length} reviews...`)
-  
+  console.log(`   Inserting ${reviews.length} reviews...`)
+
   for (let i = 0; i < reviews.length; i += batchSize) {
     const batch = reviews.slice(i, i + batchSize)
-    const { error } = await supabase
-      .from('reviews')
-      .insert(batch)
-      
+    const { error } = await supabase.from('reviews').insert(batch)
+
     if (error) {
-      console.error('Error inserting reviews:', error)
-      return
+      console.error('❌  Error inserting reviews:', error.message)
+      process.exit(1)
     }
   }
 
-  console.log('Database seeding complete!')
+  console.log(`✅  Inserted ${reviews.length} reviews successfully.`)
+  console.log('')
+
+  // Confirm row counts
+  const { count: productCount } = await supabase
+    .from('products')
+    .select('*', { count: 'exact', head: true })
+
+  const { count: reviewCount } = await supabase
+    .from('reviews')
+    .select('*', { count: 'exact', head: true })
+
+  console.log('📊  Final row counts:')
+  console.log(`   products table: ${productCount} rows`)
+  console.log(`   reviews  table: ${reviewCount} rows`)
+  console.log('')
+  console.log('🎉  Database seeding complete!')
 }
 
-seedDatabase().catch(console.error)
+seedDatabase().catch((err) => {
+  console.error('❌  Unexpected error:', err)
+  process.exit(1)
+})

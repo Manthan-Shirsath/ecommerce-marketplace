@@ -1,18 +1,23 @@
 import { createClient } from '@supabase/supabase-js'
 import { MarketplaceProduct, MarketplaceReview } from './constants'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://xyzcompany.supabase.co'
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'public-anon-key'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-// Ensure URL is valid for Supabase client initialization, fallback if user used a <placeholder>
-const validUrl = supabaseUrl.startsWith('http') ? supabaseUrl : 'https://mock.supabase.co'
+if (!supabaseUrl || !supabaseUrl.startsWith('http')) {
+  throw new Error('Missing or invalid NEXT_PUBLIC_SUPABASE_URL in .env.local')
+}
+if (!supabaseAnonKey || supabaseAnonKey === '<my_publishable_key>') {
+  throw new Error('Missing NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local')
+}
 
-export const supabase = createClient(validUrl, supabaseAnonKey)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 export async function getFeaturedProducts(): Promise<MarketplaceProduct[]> {
   const { data, error } = await supabase
     .from('products')
     .select('*')
+    .limit(12)
 
   if (error) {
     console.error('Error fetching featured products:', error)

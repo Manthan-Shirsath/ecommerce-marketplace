@@ -1,9 +1,19 @@
-import { ArrowRight } from "lucide-react"
+"use client"
+
+import { useState } from "react"
+import { ArrowRight, CheckCircle2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
 export function NewsletterSection() {
+  const [submitted, setSubmitted] = useState(false)
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setSubmitted(true)
+  }
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
       <div className="relative overflow-hidden rounded-[2rem] border border-border/70 bg-primary px-6 py-10 text-primary-foreground sm:px-10 lg:px-12">
@@ -22,22 +32,31 @@ export function NewsletterSection() {
             </p>
           </div>
 
-          <form className="grid w-full gap-3 sm:grid-cols-[minmax(0,1fr)_auto] lg:min-w-[28rem]">
-            <Input
-              type="email"
-              placeholder="Enter your email"
-              className="h-11 border-white/20 bg-white/10 text-primary-foreground placeholder:text-primary-foreground/60"
-            />
-            <Button
-              type="submit"
-              className="h-11 bg-background px-5 text-foreground hover:bg-background/90"
-            >
-              Subscribe
-              <ArrowRight className="size-4" />
-            </Button>
-          </form>
+          {submitted ? (
+            <div className="flex h-11 w-full items-center justify-center gap-2 rounded-md border border-white/20 bg-white/10 px-5 text-sm font-medium text-primary-foreground sm:w-auto lg:min-w-[28rem]">
+              <CheckCircle2 className="size-4" />
+              Thanks for subscribing! We'll be in touch.
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="grid w-full gap-3 sm:grid-cols-[minmax(0,1fr)_auto] lg:min-w-[28rem]">
+              <Input
+                type="email"
+                required
+                placeholder="Enter your email"
+                className="h-11 border-white/20 bg-white/10 text-primary-foreground placeholder:text-primary-foreground/60"
+              />
+              <Button
+                type="submit"
+                className="h-11 bg-background px-5 text-foreground hover:bg-background/90"
+              >
+                Subscribe
+                <ArrowRight className="size-4 ml-2" />
+              </Button>
+            </form>
+          )}
         </div>
       </div>
     </section>
   )
 }
+

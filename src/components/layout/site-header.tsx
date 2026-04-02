@@ -52,12 +52,14 @@ export function SiteHeader() {
               Start selling
             </Button>
           </Link>
-          <Button
-            variant="outline"
-            className="h-10 border-border/80 bg-transparent"
-          >
-            Sign in
-          </Button>
+          <Link href="/login">
+            <Button
+              variant="outline"
+              className="h-10 border-border/80 bg-transparent"
+            >
+              Sign in
+            </Button>
+          </Link>
           <CartLinkButton />
         </div>
 
