@@ -38,7 +38,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       const storedCart = window.localStorage.getItem(CART_STORAGE_KEY)
       if (storedCart) {
-        setItems(JSON.parse(storedCart) as CartProduct[])
+        const parsed = JSON.parse(storedCart)
+        if (Array.isArray(parsed)) {
+          // Robustly check that each item has the correct structure
+          const validItems = parsed.filter(
+            (item) => item && typeof item === "object" && item.product && typeof item.product.price === "number"
+          )
+          setItems(validItems)
+        } else {
+          window.localStorage.removeItem(CART_STORAGE_KEY)
+        }
       }
     } catch {
       window.localStorage.removeItem(CART_STORAGE_KEY)
