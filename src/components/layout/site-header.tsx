@@ -1,5 +1,8 @@
+"use client"
+
+import { useState } from "react"
 import Link from "next/link"
-import { Menu, Search, ShoppingBag } from "lucide-react"
+import { Menu, Search, ShoppingBag, X } from "lucide-react"
 
 import { CartLinkButton } from "@/components/cart/cart-link-button"
 import { Button } from "@/components/ui/button"
@@ -7,6 +10,8 @@ import { Input } from "@/components/ui/input"
 import { navigation } from "@/lib/constants"
 
 export function SiteHeader() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
   return (
     <header className="sticky top-0 z-30 border-b border-border/70 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">
@@ -15,7 +20,7 @@ export function SiteHeader() {
             <ShoppingBag className="size-4" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-foreground">Ecommerce</p>
+            <p className="text-sm font-semibold text-foreground hidden sm:block">Ecommerce</p>
           </div>
         </Link>
 
@@ -43,7 +48,20 @@ export function SiteHeader() {
           </form>
         </div>
 
-        <div className="hidden items-center gap-2 sm:flex">
+        <div className="ml-auto flex items-center gap-2 md:hidden">
+          <CartLinkButton />
+          <Button
+            variant="outline"
+            size="icon"
+            className="size-10"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Open navigation"
+          >
+            {isMobileMenuOpen ? <X className="size-4" /> : <Menu className="size-4" />}
+          </Button>
+        </div>
+
+        <div className="hidden items-center gap-2 md:flex ml-auto">
           <Link href="/sell">
             <Button
               variant="default"
@@ -62,16 +80,55 @@ export function SiteHeader() {
           </Link>
           <CartLinkButton />
         </div>
-
-        <Button
-          variant="outline"
-          size="icon"
-          className="size-10 md:hidden"
-          aria-label="Open navigation"
-        >
-          <Menu className="size-4" />
-        </Button>
       </div>
+
+      {isMobileMenuOpen && (
+        <div className="border-t border-border/70 bg-background md:hidden">
+          <div className="space-y-4 px-4 py-4 sm:px-6">
+            <form action="/search" className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                name="q"
+                type="search"
+                placeholder="Search products..."
+                className="h-10 border-border/80 bg-background pl-9"
+              />
+            </form>
+
+            <nav className="flex flex-col gap-4 py-2">
+              {navigation.map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-sm font-medium text-foreground transition-colors hover:text-primary"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+
+            <div className="flex flex-col gap-2 pt-2">
+              <Link href="/sell" onClick={() => setIsMobileMenuOpen(false)}>
+                <Button
+                  variant="default"
+                  className="w-full h-10 bg-primary/10 text-primary hover:bg-primary/20"
+                >
+                  Start selling
+                </Button>
+              </Link>
+              <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                <Button
+                  variant="outline"
+                  className="w-full h-10 border-border/80 bg-transparent"
+                >
+                  Sign in
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   )
 }
