@@ -13,7 +13,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { formatCurrency } from "@/lib/format"
-import { getProducts, getReviewsForProducts, ProductSort } from "@/lib/supabase"
+import { fetchProducts } from "@/backend/services/productService"
+import { fetchReviewsForProducts } from "@/backend/services/reviewService"
 import { ProductFilters } from "@/components/products/product-filters"
 import { ProductSort as ProductSortDropdown } from "@/components/products/product-sort"
 import { redirect } from "next/navigation"
@@ -34,17 +35,18 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     redirect("/")
   }
 
-  const sort = searchParams.sort as ProductSort | undefined
+  const sort = searchParams.sort
   const minPrice = searchParams.minPrice ? Number(searchParams.minPrice) : undefined
   const maxPrice = searchParams.maxPrice ? Number(searchParams.maxPrice) : undefined
 
-  const products = await getProducts({
-    query,
+  const products = await fetchProducts({
+    q: query,
     minPrice,
-    maxPrice
-  }, sort)
+    maxPrice,
+    sort
+  })
   
-  const reviews = await getReviewsForProducts(products.map((p) => p.id))
+  const reviews = await fetchReviewsForProducts(products.map((p) => p.id))
 
   return (
     <div className="min-h-screen bg-background text-foreground">

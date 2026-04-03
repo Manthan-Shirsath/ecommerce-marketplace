@@ -13,8 +13,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { formatCurrency } from "@/lib/format"
-import { getProductsBySeller, getReviewsForProducts } from "@/lib/supabase"
-
+import { fetchProductsBySeller } from "@/backend/services/productService"
+import { fetchReviewsForProducts } from "@/backend/services/reviewService"
 type SellerPageProps = {
   params: {
     name: string

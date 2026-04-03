@@ -12,12 +12,29 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { getFeaturedProducts, getReviewsForProducts } from "@/lib/supabase"
+import { fetchFeaturedProducts } from "@/backend/services/productService"
+import { fetchReviewsForProducts } from "@/backend/services/reviewService"
 import { formatCurrency } from "@/lib/format"
 
 export async function FeaturedProducts() {
-  const featuredProducts = await getFeaturedProducts()
-  const reviews = await getReviewsForProducts(featuredProducts.map((p) => p.id))
+  const featuredProducts = await fetchFeaturedProducts()
+  const reviews = await fetchReviewsForProducts(featuredProducts.map((p) => p.id))
+
+  const productsWithRatings = featuredProducts.map((product) => {
+    const productReviews = reviews.filter((r) => r.product_id === product.id)
+    const ratingCount = productReviews.length
+    
+    // Calculate average rating or fallback to product's default
+    const averageRating = ratingCount > 0 
+      ? productReviews.reduce((sum, r) => sum + r.rating, 0) / ratingCount
+      : product.rating
+
+    return {
+      ...product,
+      rating: averageRating,
+      ratingCount,
+    }
+  })
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
@@ -28,7 +45,7 @@ export async function FeaturedProducts() {
           description="Explore a few of the products buyers are discovering from independent sellers and small-town makers."
         />
 
-        {featuredProducts.length === 0 ? (
+        {productsWithRatings.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border py-20 text-center">
             <h3 className="text-xl font-semibold">No products found</h3>
             <p className="mt-2 text-sm text-muted-foreground">
@@ -37,13 +54,7 @@ export async function FeaturedProducts() {
           </div>
         ) : (
           <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-4">
-            {featuredProducts.map((product, index) => {
-              const productReviews = reviews.filter((r) => r.product_id === product.id)
-              const reviewCount = productReviews.length
-              const averageRating = reviewCount > 0 
-                ? (productReviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount).toFixed(1)
-                : (product.rating ?? 0).toFixed(1)
-
+            {productsWithRatings.map((product, index) => {
               return (
               <div key={product.id} className="relative">
                 <Link
@@ -92,7 +103,7 @@ export async function FeaturedProducts() {
                       </Badge>
                       <div className="inline-flex items-center gap-1 text-sm text-muted-foreground">
                         <Star className="size-4 fill-amber-400 text-amber-400" />
-                        <span>{averageRating} ({reviewCount})</span>
+                        <span>{typeof product.rating === 'number' ? product.rating.toFixed(1) : parseFloat(product.rating as string || '0').toFixed(1)} ({product.ratingCount})</span>
                       </div>
                     </div>
                     <div className="space-y-2">

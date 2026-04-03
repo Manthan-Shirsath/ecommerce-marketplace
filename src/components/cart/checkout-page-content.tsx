@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
 
 import { useCart } from "@/components/cart/cart-provider"
 import { Button } from "@/components/ui/button"
@@ -19,9 +20,39 @@ export function CheckoutPageContent() {
   const router = useRouter()
   const { cartProducts, totalPrice, clearCart } = useCart()
 
-  const handlePlaceOrder = () => {
-    clearCart()
-    router.push("/order-success")
+  const [isProcessing, setIsProcessing] = useState(false)
+
+  const handlePlaceOrder = async () => {
+    setIsProcessing(true)
+    try {
+      // Fetch user from our new Auth system/localStorage
+      const userStr = window.localStorage.getItem("authUser")
+      const userId = userStr ? JSON.parse(userStr).id : "anonymous-user"
+
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          cartItems: cartProducts.map(cp => ({
+            productId: cp.productId,
+            quantity: cp.quantity
+          }))
+        })
+      })
+
+      if (!response.ok) {
+        const err = await response.json()
+        throw new Error(err.error || "Failed to process order")
+      }
+
+      clearCart()
+      router.push("/order-success")
+    } catch (error: any) {
+      alert(`Checkout failed: ${error.message}`)
+    } finally {
+      setIsProcessing(false)
+    }
   }
 
   if (cartProducts.length === 0) {

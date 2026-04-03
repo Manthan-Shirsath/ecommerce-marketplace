@@ -13,13 +13,32 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
+    try {
+      const form = e.target as HTMLFormElement
+      const email = (form.elements.namedItem("email") as HTMLInputElement).value
+
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      })
+
+      if (!res.ok) throw new Error("Login failed")
+
+      const data = await res.json()
+      // In a real app we'd save this to a global AuthProvider or cookies
+      window.localStorage.setItem("authToken", data.token)
+      window.localStorage.setItem("authUser", JSON.stringify(data.user))
+
       setSuccess(true)
-    }, 1000)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
