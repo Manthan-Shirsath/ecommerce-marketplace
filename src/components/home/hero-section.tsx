@@ -2,7 +2,7 @@ import Link from "next/link"
 import { ArrowRight, Star } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -37,19 +37,24 @@ export function HeroSection() {
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Link href="/search">
-              <Button className="h-11 bg-primary px-5 text-primary-foreground hover:bg-primary/90">
-                Shop Products
-                <ArrowRight className="size-4" />
-              </Button>
+            <Link
+              href="/search"
+              className={buttonVariants({
+                variant: "default",
+                className: "h-11 px-5",
+              })}
+            >
+              Shop Products
+              <ArrowRight className="size-4" />
             </Link>
-            <Link href="/#categories">
-              <Button
-                variant="outline"
-                className="h-11 border-border/80 bg-background/80 px-5"
-              >
-                Browse Categories
-              </Button>
+            <Link
+              href="/#categories"
+              className={buttonVariants({
+                variant: "outline",
+                className: "h-11 border-border/80 bg-background/80 px-5",
+              })}
+            >
+              Browse Categories
             </Link>
           </div>
 

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 import { useCart } from "@/components/cart/cart-provider"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -65,8 +65,11 @@ export function CheckoutPageContent() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Link href="/" className="inline-flex">
-            <Button>Continue shopping</Button>
+          <Link
+            href="/"
+            className={buttonVariants({ variant: "default" })}
+          >
+            Continue shopping
           </Link>
         </CardContent>
       </Card>

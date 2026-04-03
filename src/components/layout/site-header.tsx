@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Menu, Search, ShoppingBag, X } from "lucide-react"
 
 import { CartLinkButton } from "@/components/cart/cart-link-button"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { navigation } from "@/lib/constants"
 
@@ -62,21 +62,23 @@ export function SiteHeader() {
         </div>
 
         <div className="hidden items-center gap-2 md:flex ml-auto">
-          <Link href="/sell">
-            <Button
-              variant="default"
-              className="h-10 bg-primary/10 text-primary hover:bg-primary/20"
-            >
-              Start selling
-            </Button>
+          <Link
+            href="/sell"
+            className={buttonVariants({
+              variant: "default",
+              className: "h-10 bg-primary/10 text-primary hover:bg-primary/20",
+            })}
+          >
+            Start selling
           </Link>
-          <Link href="/login">
-            <Button
-              variant="outline"
-              className="h-10 border-border/80 bg-transparent"
-            >
-              Sign in
-            </Button>
+          <Link
+            href="/login"
+            className={buttonVariants({
+              variant: "outline",
+              className: "h-10 border-border/80 bg-transparent",
+            })}
+          >
+            Sign in
           </Link>
           <CartLinkButton />
         </div>
@@ -109,21 +111,25 @@ export function SiteHeader() {
             </nav>
 
             <div className="flex flex-col gap-2 pt-2">
-              <Link href="/sell" onClick={() => setIsMobileMenuOpen(false)}>
-                <Button
-                  variant="default"
-                  className="w-full h-10 bg-primary/10 text-primary hover:bg-primary/20"
-                >
-                  Start selling
-                </Button>
+              <Link
+                href="/sell"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={buttonVariants({
+                  variant: "default",
+                  className: "w-full h-10 bg-primary/10 text-primary hover:bg-primary/20",
+                })}
+              >
+                Start selling
               </Link>
-              <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                <Button
-                  variant="outline"
-                  className="w-full h-10 border-border/80 bg-transparent"
-                >
-                  Sign in
-                </Button>
+              <Link
+                href="/login"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={buttonVariants({
+                  variant: "outline",
+                  className: "w-full h-10 border-border/80 bg-transparent",
+                })}
+              >
+                Sign in
               </Link>
             </div>
           </div>

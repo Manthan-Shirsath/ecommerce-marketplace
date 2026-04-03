@@ -3,7 +3,7 @@
 import Link from "next/link"
 
 import { useCart } from "@/components/cart/cart-provider"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -27,8 +27,11 @@ export function CartPageContent() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Link href="/" className="inline-flex">
-            <Button>Continue shopping</Button>
+          <Link
+            href="/"
+            className={buttonVariants({ variant: "default" })}
+          >
+            Continue shopping
           </Link>
         </CardContent>
       </Card>
@@ -104,10 +107,14 @@ export function CartPageContent() {
               {formatCurrency(totalPrice)}
             </span>
           </div>
-          <Link href="/checkout" className="block">
-            <Button className="h-11 w-full bg-primary text-primary-foreground hover:bg-primary/90">
-              Checkout
-            </Button>
+          <Link
+            href="/checkout"
+            className={buttonVariants({
+              variant: "default",
+              className: "h-11 w-full bg-primary text-primary-foreground hover:bg-primary/90 block text-center flex items-center justify-center",
+            })}
+          >
+            Checkout
           </Link>
         </CardContent>
       </Card>
